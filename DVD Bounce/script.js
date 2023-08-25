@@ -1,0 +1,99 @@
+const canvas = document.querySelector('#canvas');
+const ctx = canvas.getContext("2d");
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+const colorsCombo1 = ['#ff0000','ffa500','90ee90','#4b0082','0000ff']; // Default
+const colorsCombo2 = ['#e5243f','#f65c51','#f7b15c','#54c6be','#2f5755']; // muted
+const bgColor = '#eeeeee';
+
+ctx.fillStyle = bgColor;
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+let FPS = 30;
+let radius = 60;
+let xPosition = 200;
+let yPosition = 100;
+let xVelocity = (Math.floor(Math.random()*76 + 25)) / FPS;
+let yVelocity = (Math.floor(Math.random()*76 + 25)) / FPS;
+console.log(xVelocity,yVelocity);
+let logoImg = document.querySelector("#logo");
+
+
+if(Math.floor(Math.random()*2) == 0) {
+    xVelocity = -xVelocity;
+}
+if(Math.floor(Math.random()*2) == 0) {
+    yVelocity = -yVelocity;
+}
+
+let idx = parseInt(Math.random()*5);
+let color = colorsCombo2[idx];
+
+function loop() {
+    // deciding the color of ball
+    // increment
+    xPosition += xVelocity;
+    yPosition += yVelocity;
+    
+    // collision
+    if(xPosition-radius < 0 && xVelocity < 0) { 
+        xVelocity = -xVelocity;
+
+    }else if(xPosition+radius > canvas.width && xVelocity > 0) { 
+        xVelocity = -xVelocity;
+    }
+
+    if(yPosition-radius < 0 && yVelocity < 0) { 
+        yVelocity = -yVelocity;
+        
+    }else if(yPosition+radius > canvas.height && yVelocity > 0) { 
+        yVelocity = -yVelocity;
+    }
+
+    // resetting the whole canvas to be black
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 1st degradation
+    ctx.beginPath();
+    ctx.arc(xPosition-xVelocity*1.5, yPosition-yVelocity*1.5, radius, 0, Math.PI*2);
+    // ctx.strokeStyle = '#333333';
+    ctx.fillStyle = color + "dd";
+    ctx.fill();
+    // ctx.stroke();
+
+    // 2nd degradation
+    ctx.beginPath();
+    ctx.arc(xPosition-xVelocity*3, yPosition-yVelocity*3, radius, 0, Math.PI*2);
+    // ctx.strokeStyle = '#333333';
+    ctx.fillStyle = color + "aa";
+    ctx.fill();
+    // ctx.stroke();
+    
+    // 3rd degradation
+    ctx.beginPath();
+    ctx.arc(xPosition-xVelocity*4.5, yPosition-yVelocity*4.5, radius, 0, Math.PI*2);
+    // ctx.strokeStyle = '#333333';
+    ctx.fillStyle = color + "66";
+    ctx.fill();
+    // ctx.stroke();
+    
+    // 4th degradation
+    ctx.beginPath();
+    ctx.arc(xPosition-xVelocity*6, yPosition-yVelocity*6, radius, 0, Math.PI*2);
+    // ctx.strokeStyle = '#333333';
+    ctx.fillStyle = color + "33";
+    ctx.fill();
+    // ctx.stroke();
+    
+    // main
+    ctx.beginPath();
+    ctx.arc(xPosition, yPosition, radius, 0, Math.PI*2);
+    ctx.drawImage(logoImg,xPosition,yPosition,100,100);
+    ctx.strokeStyle = '#333333';
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.stroke();
+    
+}
+
+setInterval(loop,1000/FPS);

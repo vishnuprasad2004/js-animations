@@ -1,0 +1,106 @@
+const canvas = document.getElementById("canvas")
+const c = canvas.getContext('2d')
+canvas.width = innerWidth
+canvas.height = innerHeight
+const colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
+let max = Math.max(canvas.width, canvas.height)
+// let canvasHeight = max + 300
+// let canvasWidth = max + 300
+let alpha = 1
+let velocity = 1
+let mouseDown = false
+let mouse = {
+    x: 0,
+    y: 0
+}
+addEventListener('mousemove',(event) => {
+    mouse.x = event.clientX
+    mouse.y = event.clientY
+})
+addEventListener('resize',() => {
+    location.reload()
+})
+addEventListener('mousedown',() => {
+    mouseDown = true
+})
+addEventListener('mouseup',() => {
+    mouseDown = false
+})
+class Star {
+    constructor() {
+        this.position = {
+            x: (Math.random() * canvas.width),
+            y: (Math.random() * canvas.height)
+        }
+        this.radius = Math.random() * 3
+        this.color = colors[Math.floor(Math.random()*colors.length)]
+        this.velocity = {
+            x:1,
+            y:1
+        }
+        this.shadow = 10
+    }
+    draw() {
+        c.beginPath()
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2, true)
+        c.shadowColor = this.color
+        c.shadowBlur = this.shadow
+        c.fillStyle = this.color
+        c.fill()
+        c.closePath()
+    }
+    update() {
+        if(this.position.x + this.radius >= canvas.width || this.radius + this.position.y >= canvas.height) {
+            if(Math.floor(Math.random()*2) == 0) {
+                this.position.x = ( Math.random() * canvas.width )
+                this.position.y = /*( Math.random() * canvas.height )*/ -10
+            }else {
+                this.position.x = /*( Math.random() * canvas.width )*/ -10
+                this.position.y = ( Math.random() * canvas.height ) 
+
+            }
+        }
+        this.position.x += this.velocity.x
+        this.position.y += this.velocity.y
+        this.draw()
+    }
+}
+let stars = []
+for(let i=0;i<600;i++) {
+    stars.push(new Star())
+} 
+
+function distance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2-x1,2)+ Math.pow(y2-y1,2))
+}
+
+function animate() {
+    requestAnimationFrame(animate)
+    c.rect(0, 0, canvas.width, canvas.height)
+    c.fillStyle = `rgba(5, 5, 10, ${alpha})`
+    c.fill()
+    
+    stars.forEach(star => {
+        if(distance(mouse.x, mouse.y, star.position.x, star.position.y) < 100) { 
+            star.shadow = 20
+        } else {
+            star.shadow = 0
+        }
+        star.velocity.x = velocity
+        star.velocity.y = velocity
+        star.update()
+    })
+
+    // velocity/maxVelocity = mouse.x/canvas.width
+    velocity = (mouse.x/canvas.width) * 2 + 1
+
+    // if(mouseDown && alpha >= 0.8) {
+    //     alpha -= 0.01
+    //     velocity = 3
+    // }else if(!mouseDown && alpha <= 1) {
+    //     alpha += 0.01
+    //     velocity = 1
+    // }
+
+}
+animate()
